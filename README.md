@@ -38,7 +38,17 @@ apsimxpy/
             └── soil_extraction.py
 ```
 
+## 📦 Installation
 
+### Prerequisites
+- dotnet 8.0
+
+### Steps
+
+- Run following commands in your terminal
+```
+export PATH=$HOME/.dotnet:$PATH  
+```
 
 
 
