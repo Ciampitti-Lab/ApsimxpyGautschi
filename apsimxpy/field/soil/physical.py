@@ -143,7 +143,8 @@ class Physical(ApsimModifier):
 class PhysicalCrop(ApsimModifier):
     def __init__(self,init_obj=None):
         self.apsim_file_input=init_obj.apsim_file_input
-        apsim_file=open(f"/workspace/{self.apsim_file_input}.apsimx","r")
+        self.apsim_folder_input=init_obj.apsim_folder_input
+        apsim_file=open(os.path.join(self.apsim_folder_input, f"{self.apsim_file_input}.apsimx"), "r")
         apsim_json = apsim_file.read()
         self.modifier=json.loads(apsim_json)
         children = self.modifier["Children"][0]["Children"]
@@ -151,7 +152,7 @@ class PhysicalCrop(ApsimModifier):
         soil = next(zone for zone in zones['Children'] if zone["$type"] == "Models.Soils.Soil, Models")
         self.physical = next(prop for prop in soil['Children'] if prop["$type"] == "Models.Soils.Physical, Models")
     def _reload(self):
-        apsim_file=open(f"/workspace/{self.apsim_file_input}.apsimx","r")
+        apsim_file=open(os.path.join(self.apsim_folder_input, f"{self.apsim_file_input}.apsimx"), "r")
         apsim_json = apsim_file.read()
         self.modifier=json.loads(apsim_json)
         children = self.modifier["Children"][0]["Children"]
@@ -160,7 +161,7 @@ class PhysicalCrop(ApsimModifier):
         self.physical = next(prop for prop in soil['Children'] if prop["$type"] == "Models.Soils.Physical, Models")
         
     def save_changes(self):
-        with open(f"/workspace/{self.apsim_file_input}.apsimx", "w") as f:
+        with open(os.path.join(self.apsim_folder_input, f"{self.apsim_file_input}.apsimx"), "w") as f:
             json.dump(self.modifier, f, indent=4)  
             
     def set_ll(self,new_list):

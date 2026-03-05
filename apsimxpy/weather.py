@@ -56,7 +56,7 @@ class Weather(ApsimModifier):
                         .mean()
                         .mean(axis=1))
         amp = monthly_means.max() - monthly_means.min()
-        filename = os.path.join(self.apsim_folder_input,"weather", f"{filename}")
+        filename = os.path.join("/depot/ciampitti/data/WorkflowApsimNitrogenData/_4RunSimulationsData/weather", f"{filename}")
         # load the file to the weather folder
         with open(filename, "w") as f:
             f.write("!Title = Example Weather File\n")
@@ -80,6 +80,6 @@ class Weather(ApsimModifier):
     # To set the weather
     def set_weather(self,Filename):
         self._reload()
-        Filename=f'/folder/weather/{Filename}.met'
+        Filename=f'/depot/ciampitti/data/WorkflowApsimNitrogenData/_4RunSimulationsData/weather/{Filename}.met'
         self.modifier['Children'][0]['Children'][self.model]['FileName']=Filename
         self.save_changes()
