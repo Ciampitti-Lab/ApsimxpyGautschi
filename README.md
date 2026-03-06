@@ -49,6 +49,8 @@ apsimxpy/
 ```
 export PATH=$HOME/.dotnet:$PATH  
 ```
-
-
+- Run Sample simualtion
+```
+dotnet $HOME/ApsimX/bin/Release/net8.0/apsim.dll run Example.apsimx  
+```
 
