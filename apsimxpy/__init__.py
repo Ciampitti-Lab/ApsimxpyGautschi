@@ -28,11 +28,10 @@ class simulator:
         self.apsim_file_input_original=init_obj.apsim_file_input
         # Command for run docker container
         self.command = [
-            "docker", "run", "--rm", "--platform", "linux/amd64",
-            "-v", f"{self.apsim_folder_input}:/folder",
-            "apsiminitiative/apsimng",
-            f"/folder/{self.apsim_file_input}.apsimx",
-            "--csv"
+            "dotnet",
+            f"{os.environ['HOME']}/ApsimX/bin/Release/net8.0/apsim.dll",
+            "run",
+            os.path.join(self.apsim_folder_input, f"{self.apsim_file_input}.apsimx")
         ]
         
     def run(self):
