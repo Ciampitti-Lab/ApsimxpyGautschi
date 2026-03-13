@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from shapely import wkt
 import numpy as np
+import contextlib
 
 def get_poly_soil(polygon, plot=False)-> pd.DataFrame:
     # Wraping the polygon in a MultiPolygon
