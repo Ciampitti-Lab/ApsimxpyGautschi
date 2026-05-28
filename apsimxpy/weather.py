@@ -4,6 +4,7 @@ from .utils import ApsimModifier
 import os
 import json 
 import pandas as pd
+from pathlib import Path
 
 class Weather(ApsimModifier):
     def __init__(self,init_obj):
@@ -56,7 +57,9 @@ class Weather(ApsimModifier):
                         .mean()
                         .mean(axis=1))
         amp = monthly_means.max() - monthly_means.min()
-        filename = os.path.join("/depot/ciampitti/data/WorkflowApsimNitrogenData/_4RunSimulationsData/weather", f"{filename}")
+        path = Path(self.apsim_folder_input)
+        workflow = path.relative_to("/depot/ciampitti/data").parts[0]
+        filename = os.path.join("/depot/ciampitti/data",workflow,"_4RunSimulationsData","weather",filename)
         # load the file to the weather folder
         with open(filename, "w") as f:
             f.write("!Title = Example Weather File\n")
@@ -78,8 +81,10 @@ class Weather(ApsimModifier):
         print(f'.met file created succesfully: {filename}')
     
     # To set the weather
-    def set_weather(self,Filename):
+    def set_weather(self,filename):
         self._reload()
-        Filename=f'/depot/ciampitti/data/WorkflowApsimNitrogenData/_4RunSimulationsData/weather/{Filename}.met'
-        self.modifier['Children'][0]['Children'][self.model]['FileName']=Filename
+        path = Path(self.apsim_folder_input)
+        workflow = path.relative_to("/depot/ciampitti/data").parts[0]
+        filename = os.path.join("/depot/ciampitti/data",workflow,"_4RunSimulationsData","weather",filename)
+        self.modifier['Children'][0]['Children'][self.model]['FileName']=filename
         self.save_changes()
