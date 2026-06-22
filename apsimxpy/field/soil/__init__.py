@@ -10,6 +10,7 @@ from .physical import Physical, PhysicalCrop
 from .soil_water import SoilWater
 from .water import Water
 from .organic import Organic
+from ..management.nappa import Nappa
 from ...utils import ApsimModifier
 import os
 
@@ -88,6 +89,7 @@ class Soil(ApsimModifier):
         soil_che=Chemical(self.init_obj)
         soil_wat=Water(self.init_obj)
         SW_soil_wat=SoilWater(self.init_obj)
+        nappa=Nappa(self.init_obj)
         ###################### THICKNESS ############################################################################
         soil_phy.set_Thickness(list(soil_saxton['THICK']))
         soil_che.set_Thickness(list(soil_saxton['THICK']))
@@ -100,7 +102,7 @@ class Soil(ApsimModifier):
         organ = next(prop for prop in self.Soil['Children'] if prop["$type"] == "Models.Soils.Organic, Models")
         chemical = next(prop for prop in self.Soil['Children'] if prop["$type"] == "Models.Soils.Chemical, Models")
         
-        organ['Thickness']=water['Thickness']=waterb['Thickness']=chemical['Thickness']=thickness
+        organ['Thickness']=water['Thickness']=chemical['Thickness']=waterb['Thickness']=thickness
         self.save_changes()  
         #############################################################################################################
         soil_phy.set_ParticleSizeSand(list(soil_saxton['SAND']))
@@ -122,6 +124,7 @@ class Soil(ApsimModifier):
         soil_phy.set_KS(list(soil_saxton['KSAT'])) 
         soil_org.set_FOM([round(x, 4) for x in 40 * self.__soil_variable_profile(len(thickness),a=0,b=0)])   
         soil_wat.set_InitialValues(list(soil_saxton['DUL']))
+        nappa.set_water_table_depth(int(soil_saxton['NAPPA'].iloc[0]))
         
         
         top=soil_saxton['TOP_LAYER']
@@ -186,7 +189,7 @@ class Soil(ApsimModifier):
         organ = next(prop for prop in self.Soil['Children'] if prop["$type"] == "Models.Soils.Organic, Models")
         chemical = next(prop for prop in self.Soil['Children'] if prop["$type"] == "Models.Soils.Chemical, Models")
         
-        organ['Thickness']=water['Thickness']=waterb['Thickness']=chemical['Thickness']=thickness
+        organ['Thickness']=water['Thickness']=chemical['Thickness']=waterb['Thickness']=thickness
         self.save_changes()
         ###############################################################################################################
         

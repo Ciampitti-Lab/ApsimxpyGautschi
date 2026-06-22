@@ -17,6 +17,7 @@ apsimxpy/field/surfaceorganicmatter.py
 apsimxpy/field/management/__init__.py
 apsimxpy/field/management/cropmanagement.py
 apsimxpy/field/management/fertilize.py
+apsimxpy/field/management/nappa.py
 apsimxpy/field/management/tillage.py
 apsimxpy/field/soil/__init__.py
 apsimxpy/field/soil/chemical.py

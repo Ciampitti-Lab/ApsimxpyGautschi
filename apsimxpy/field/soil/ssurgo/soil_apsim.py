@@ -156,6 +156,8 @@ def soil_apsim(soil_props_surgo):
     TOP=[x*10 for x in soil_props_surgo['hzdept_r']]
     BOT=[x*10 for x in soil_props_surgo['hzdepb_r']]
     
+    # Water table
+    NAPPA=soil_props_surgo['wtdepannmin']
     
     apsim_soil=pd.DataFrame(
         {'SAND':SAND,
@@ -184,7 +186,8 @@ def soil_apsim(soil_props_surgo):
          'CEC': CEC,
          'THICK':THICK,
          'TOP_LAYER':TOP,
-         'BOT_LAYER':BOT
+         'BOT_LAYER':BOT,
+         'NAPPA':NAPPA
          }
     )
     return apsim_soil

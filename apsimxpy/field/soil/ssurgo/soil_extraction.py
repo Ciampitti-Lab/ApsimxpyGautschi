@@ -109,6 +109,47 @@ def get_soil_props(soils,mukey_soil)-> pd.DataFrame:
         soil_features_df = soil_features_df[soil_features_df['mukey'].astype(int)==mukey_soil]
         soil_features_df.reset_index(drop=True, inplace=True)
         soil_props_ssurgo[j]=soil_features_df[j]
+        
+    NO_NAPPA_MM = 10000
+    MIN_NAPPA_MM = 1000
+    def ssurgo_wtdep_to_apsim_mm(wtd_cm):
+        """
+        Convert SSURGO wtdepaprjunmin (cm) to APSIM WaterTableDepth (mm).
+        Rules:
+        - missing/NaN     -> 10000 (no nappa)
+        - < 1000 mm       -> 1000
+        - otherwise       -> round(cm) * 10
+        """
+        if wtd_cm is None or (isinstance(wtd_cm, float) and np.isnan(wtd_cm)):
+            return NO_NAPPA_MM
+        try:
+            wtd_cm = float(wtd_cm)
+        except (TypeError, ValueError):
+            return NO_NAPPA_MM
+        if np.isnan(wtd_cm):
+            return NO_NAPPA_MM
+        # Optional: treat SSURGO sentinel / invalid codes as missing
+        if wtd_cm <= 0 or wtd_cm >= 999:
+            return NO_NAPPA_MM
+        depth_mm = round(wtd_cm) * 10
+        if depth_mm < MIN_NAPPA_MM:
+            depth_mm = MIN_NAPPA_MM
+        return int(depth_mm)
+    try:
+        wtd_df = sdaprop.getprop(
+            df=soils,
+            column='mukey',
+            method='muaggatt'
+        )
+        wtd_df = wtd_df[wtd_df['mukey'].astype(int) == mukey_soil]
+        if len(wtd_df) > 0:
+            wtd_cm = float(wtd_df['wtdepaprjunmin'].iloc[0])
+        else:
+            wtd_cm = np.nan
+    except Exception as e:
+        print(f"⚠ WTD not available for mukey {mukey_soil}: {e}")
+        wtd_cm = np.nan
+    water_table_mm = ssurgo_wtdep_to_apsim_mm(wtd_cm)
     # Get the thickness of the horizons of the main-soil
     hzdept_r=soil_features_df['hzdept_r']
     hzdepb_r=soil_features_df['hzdepb_r']
@@ -129,6 +170,7 @@ def get_soil_props(soils,mukey_soil)-> pd.DataFrame:
     soil_props_ssurgo['cec7_r']=soil_props_ssurgo['cec7_r'].astype(float)
     soil_props_ssurgo['hzdept_r']=soil_props_ssurgo['hzdept_r'].astype(float)
     soil_props_ssurgo['hzdepb_r']=soil_props_ssurgo['hzdepb_r'].astype(float)
+    soil_props_ssurgo['wtdepannmin'] = water_table_mm 
     
     # Fixing values in 0
     cols_to_check = ['sandtotal_r', 'silttotal_r', 'claytotal_r', 'dbovendry_r']
